@@ -232,7 +232,7 @@ def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
     x_diff = np.array(range(0, titration_count)) # [0~(titration_count-1)]
     differenc_peak_noise_graph_path = output_folder_path + "diff_peak_noise.png"
     plt.figure(figsize=(8, 5))  # Figureを設定
-    plt.title('Difference in integral value', fontsize=18)  # タイトルを追加
+    plt.title('Integral Value of Peak Component', fontsize=18)  # タイトルを追加
     plt.ylabel("integral value(= Electric energy?)", size="large")  # y軸ラベルを追加
     plt.xlabel("Number of titrations = " + str(titration_count), size="large")  # x軸ラベルを追加
     plt.minorticks_on()  # 補助目盛りを追加
