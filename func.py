@@ -172,7 +172,7 @@ def separate_noise_from_peak(input_file_path, output_folder_path_base, M, V_inde
         plt.close(noise_graph_path)
         print('\033[32m' + 'SUCCESS：SAVE TO ' + noise_graph_path + '\033[0m')
 
-  # 時系列データSがスライド窓のステップ数Mより少なかったら返り値0,0
+  # 時系列データSがスライド窓のステップ数Mより少なかったら何もしない
   else:
     print('\033[31m' + '時系列データSがスライド窓のステップ数Mより少ないので、' + input_file_path + 'では部分時系列データXが作れません' + '\033[0m')
 
@@ -180,7 +180,7 @@ def separate_noise_from_peak(input_file_path, output_folder_path_base, M, V_inde
 def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
     
     difference_peak_noise = []
-    for i in range(titration_count):
+    for i in range(titration_count + 1):
         csv_file_peak = svd_path + "/210107C_" + str(i) + "/peak.csv"
         csv_file_noise = svd_path + "/210107C_" + str(i) + "/noise.csv"
         csv_file_time = svd_path + "/210107C_" + str(i) + "/time.csv"
@@ -216,7 +216,7 @@ def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
             '''
             # 参考：https://org-technology.com/posts/integrate-function-fixed-sample.html
             peak_component_integral = integrate.simps(peak_component, x) # ピーク成分の積分値（シンプソン法。他にも台形法、Romberg法などが使える）
-            # noise_component_integral = integrate.simps(noise_component, x) # ノイズ成分の積分値 → 使わない
+            noise_component_integral = integrate.simps(noise_component, x) # ノイズ成分の積分値
             difference_peak_noise.append(peak_component_integral) # ピーク成分と積分値を格納していく（滴定回数分）
 
         # フォルダにcsv_file_peakとcsv_file_noiseのどちらか、または両方なかったらNone(欠損地) ← 後でスプライン補完（最初からdf使っとけばよかったと公後悔w）
@@ -229,7 +229,7 @@ def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
     ピーク成分とノイズ成分の積分値の差分（何を意味する？電力量の差分？）をプロット
     → ピーク成分(ノイズ成分を除いたもの)の積分値をプロット
     '''
-    x_diff = np.array(range(0, titration_count)) # [0~(titration_count-1)]
+    x_diff = np.array(range(0, titration_count + 1)) # [0~(titration_count-1)]
     differenc_peak_noise_graph_path = output_folder_path + "diff_peak_noise.png"
     plt.figure(figsize=(8, 5))  # Figureを設定
     plt.title('Integral Value of Peak Component', fontsize=18)  # タイトルを追加
