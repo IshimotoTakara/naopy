@@ -152,6 +152,7 @@ def separate_noise_from_peak(input_file_path, output_folder_path_base, M, V_inde
         plt.minorticks_on()  # 補助目盛りを追加
         plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
         plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
+        # plt.plot(x, peak_component, color='black')  # データをプロット（ピークとノイズを重ねて）
         plt.plot(x, noise_component, color='black')  # データをプロット
         plt.savefig(noise_graph_path)  # グラフを保存
         plt.close(noise_graph_path)
@@ -165,6 +166,7 @@ def separate_noise_from_peak(input_file_path, output_folder_path_base, M, V_inde
         plt.minorticks_on()  # 補助目盛りを追加
         plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
         plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
+        # plt.plot(x, peak_component, color='black')  # データをプロット（ピークとノイズを重ねて）
         plt.plot(x, noise_component, color='black')  # データをプロット
         plt.savefig(noise_graph_path)  # グラフを保存
         plt.close(noise_graph_path)
@@ -213,9 +215,9 @@ def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
             積分計算
             '''
             # 参考：https://org-technology.com/posts/integrate-function-fixed-sample.html
-            peak_component_integral = integrate.simps(peak_component, x) # ピーク成分の積分値（シンプソン法）
-            noise_component_integral = integrate.simps(noise_component, x) # ノイズ成分の積分値（他にも台形法、Romberg法などが使える）
-            difference_peak_noise.append(peak_component_integral - noise_component_integral) # ピーク成分とノイズ成分の積分値の差
+            peak_component_integral = integrate.simps(peak_component, x) # ピーク成分の積分値（シンプソン法。他にも台形法、Romberg法などが使える）
+            # noise_component_integral = integrate.simps(noise_component, x) # ノイズ成分の積分値 → 使わない
+            difference_peak_noise.append(peak_component_integral) # ピーク成分と積分値を格納していく（滴定回数分）
 
         # フォルダにcsv_file_peakとcsv_file_noiseのどちらか、または両方なかったらNone(欠損地) ← 後でスプライン補完（最初からdf使っとけばよかったと公後悔w）
         else:
@@ -225,6 +227,7 @@ def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
 
     '''
     ピーク成分とノイズ成分の積分値の差分（何を意味する？電力量の差分？）をプロット
+    → ピーク成分(ノイズ成分を除いたもの)の積分値をプロット
     '''
     x_diff = np.array(range(0, titration_count)) # [0~(titration_count-1)]
     differenc_peak_noise_graph_path = output_folder_path + "diff_peak_noise.png"
