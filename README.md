@@ -48,8 +48,9 @@ this_project/output/ITCファイル名/singular_value_decomposition: 特異値�
 今回はthis_project = naopyで作業を行なわせていただいております.
 
 # 参考
-https://qiita.com/makotoito/items/1bb062e4264394e1c2da（異常検知（４）時系列信号の変化の検知、特異スペクトル変換法など）
+[異常検知（４）時系列信号の変化の検知、特異スペクトル変換法など](https://qiita.com/makotoito/items/1bb062e4264394e1c2da)
 
+[Scipy 数値積分](https://python.atelierkobato.com/scipy_integrate/)
 # 動作環境
 MacOS Big Monterey
 
