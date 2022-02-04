@@ -11,7 +11,7 @@ from singular_value_decomposition import singular_value_decomposition as svd
 main関数
 """
 def main():
-    input_file_path_itc = "data/210107C.ITC"
+    input_file_path_itc = "data/210107C.ITC" # data/200203C.ITC
     # input_file_path_nitpic = "data/200203C.nitpic"　# 210107C.nitpicもあるのか？
 
     os.makedirs("output", exist_ok=True)
