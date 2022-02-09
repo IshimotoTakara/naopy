@@ -26,13 +26,19 @@ def make_dictionary(data, option):
         time.append(float(s[0]) / 60) # 単位を[sec]に変換
         electric_power.append(float(s[1]) / 60) # 単位を[μcal/sec]に変換
         degree.append(float(s[2]))
+    
+    # 全データを１回目の滴定のでの電力で引く（→0スタートになる）
+        electric_power_from_zero = []
+        first_electric_power = electric_power[0] # 最初の電力データ
+        for ep in electric_power: 
+            electric_power_from_zero.append(ep - first_electric_power)
 
-    dictionary = {'Time': time, 'ElectricPower': electric_power, 'Degree': degree}
+    dictionary = {'Time': time, 'ElectricPower': electric_power_from_zero, 'Degree': degree}
 
     if option == "d":
         return dictionary
     elif option == "tedd":
-        return time, electric_power, degree, dictionary
+        return time, electric_power_from_zero, degree, dictionary
 
 # スプライン曲線を作成する関数(離散データを折れ線グラフにしたときに滑らかになる)
 def spline_interp(in_x, in_y):
