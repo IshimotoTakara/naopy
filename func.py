@@ -223,7 +223,7 @@ def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
             # 参考：https://org-technology.com/posts/integrate-function-fixed-sample.html
             peak_component_integral = integrate.simps(peak_component, x) # ピーク成分の積分値（シンプソン法。他にも台形法、Romberg法などが使える）
             noise_component_integral = integrate.simps(noise_component, x) # ノイズ成分の積分値
-            difference_peak_noise.append(peak_component_integral) # ピーク成分と積分値を格納していく（滴定回数分）
+            difference_peak_noise.append(peak_component_integral - noise_component) # ピーク成分と積分値を格納していく（滴定回数分）
 
         # フォルダにcsv_file_peakとcsv_file_noiseのどちらか、または両方なかったらNone(欠損地) ← 後でスプライン補完（最初からdf使っとけばよかったと公後悔w）
         else:
