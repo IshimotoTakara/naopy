@@ -12,7 +12,7 @@ main関数
 """
 def main():
     input_file_path_itc = "data/200203C/200203C.ITC" # data/200203C/200203C.ITC
-    input_file_path_nitpic = "data/200203C/200203C.nitpic" # 210107C.nitpicもあるのか？
+    input_file_path_nitpic = "data/200203C/200203C.nitpic" # nitpicファイル
 
     os.makedirs("output", exist_ok=True)
 
@@ -22,20 +22,20 @@ def main():
     第2引数: output_folder_path → 出力フォルダのパス（"/output"）
     '''
     print('\033[34m' + 'RUN：itc_file_data_visualization' + '\033[0m')
-    input_file_path_svd, all_data_path, titration_count = itc(input_file_path_itc, "output/")
+    experimental_data_path, titration_count = itc(input_file_path_itc, "output/")
     print('\033[34m' + 'Task of itc_file_data_visualization completed!!!')
 
     '''
-    singular_value_decomposition(input_file_path_itc, input_file_path_svd, all_data_path, output_folder_path, M, V_index)
+    singular_value_decomposition(input_file_path_itc, all_data_path, titration_count, output_folder_path, M, V_index)
     第1引数: input_file_path_itc → 分析対象のITCファイルのパス
-    第2引数: input_folder_path → itc_file_data_visualization関数からの返り値でsplit_experimental_data/フォルダのパス
-    第3引数: all_data_path → itc_file_data_visualization関数で作成したすべての実験データが保存されているCSVファイルのパス
+    第2引数: all_data_path → itc_file_data_visualization関数で作成したすべての実験データが保存されているCSVファイルのパス
+    第3引数: titration_count → 滴定回数
     第4引数: output_folder_path → 出力フォルダのパス（"/output"）
     第5引数: M → スライド窓のステップ数M
     第6引数: V_index → 要素波形のどこまでをピーク成分とするか
     '''
     print('\033[34m' + 'RUN：singular_value_decomposition' + '\033[0m')
-    # svd(input_file_path_itc, input_file_path_svd, all_data_path, titration_count, "output/", 50,4)
+    svd(input_file_path_itc, experimental_data_path, titration_count, "output/", 50, 4)
     print('\033[34m' + 'Task of singular_value_decomposition completed!!!')
 
     '''
@@ -43,9 +43,9 @@ def main():
     第1引数: input_file_path_nitpic, → 分析対象のnitpicファイルのパス
     第2引数: output_folder_path → 出力フォルダのパス（"/output"）
     '''
-    print('\033[34m' + 'RUN：nitpic_file_data_visualization' + '\033[0m')
-    nitpic(input_file_path_nitpic, "output/")
-    print('\033[34m' + 'Task of nitpic_file_data_visualization completed!!!' + '\033[0m')
+    # print('\033[34m' + 'RUN：nitpic_file_data_visualization' + '\033[0m')
+    # nitpic(input_file_path_nitpic, "output/")
+    # print('\033[34m' + 'Task of nitpic_file_data_visualization completed!!!' + '\033[0m')
 
 if __name__ == '__main__':
     print('\033[33m' + 'RUN：main' + '\033[0m')

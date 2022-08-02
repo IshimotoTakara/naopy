@@ -24,16 +24,13 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     file_name_head = os.path.splitext(os.path.basename(input_file_path))[0]  # 拡張子なしのファイル名
     os.makedirs(output_folder_path + file_name_head, exist_ok=True)
     output_folder_path_base = output_folder_path + file_name_head + "/"
-    input_file_path_svd = output_folder_path_base + "split_experimental_data/"
-    os.makedirs(input_file_path_svd, exist_ok=True)
-
 
     """
     ITCファイルを整形する
     """
     # CSVファイル（出力ファイル）のPATH
     head_path = output_folder_path_base + file_name_head + "_ITC_head.csv"  # ITCファイル先頭の情報を格納するCSVファイル
-    data_path = output_folder_path_base + file_name_head + "_ITC_experimental_data.csv"  # ITCファイルの実験データを格納するCSVファイル
+    experimental_data_path = output_folder_path_base + file_name_head + "_ITC_experimental_data.csv"  # ITCファイルの実験データを格納するCSVファイル
 
     print('ITCファイルをヘッダーと実験データに分割します.')
     # 先頭３１行とそれ以外で分割する
@@ -57,8 +54,8 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     _, _, _, dictionary = make_dictionary(data)
     # 整形した実験データをCSVファイルに出力する
     df_all = pd.DataFrame(dictionary)
-    df_all.to_csv(data_path)
-    print('\033[32m' + 'SUCCESS：SAVE TO ' + data_path + '\033[0m')
+    df_all.to_csv(experimental_data_path)
+    print('\033[32m' + 'SUCCESS：SAVE TO ' + experimental_data_path + '\033[0m')
 
     """
     実験データを滴定回数毎に分割する
@@ -72,8 +69,10 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     print('滴定回数：' + str(titration_count))
 
     # CSVファイル（出力ファイル）のPATH名のベース
-    path_base = output_folder_path_base + "split_experimental_data/"+ file_name_head
+    split_experimental_data_path = output_folder_path_base + "split_experimental_data/"
+    os.makedirs(split_experimental_data_path, exist_ok=True)
 
+    path_base = split_experimental_data_path + file_name_head
     time, electric_energy = [], []  # 電力量の推移をプロットするときに使う
 
     # 滴定回数毎の実験データをCSVファイルに出力,同時にプロット
@@ -154,4 +153,4 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     plt.close()
     print('\033[32m' + 'SUCCESS：SAVE TO ' + electric_energy_graph_path + '\033[0m')
 
-    return input_file_path_svd, data_path, titration_count
+    return experimental_data_path, titration_count
