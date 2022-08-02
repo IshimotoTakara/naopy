@@ -4,8 +4,8 @@ import csv
 from unittest import skip
 import numpy as np
 import matplotlib.pyplot as plt
-# func.pyからimport
-from func import separate_noise_from_peak, plot_difference_peak_noise
+# utils.pyからimport
+from utils import separate_noise_from_peak, plot_difference_peak_noise
 
 # input_folder_path内のCSVファイルに特異値分解を施し、その結果をプロットする
 # また、ピーク成分とノイズ成分の積分値の差もプロットする
