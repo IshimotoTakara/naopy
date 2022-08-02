@@ -4,7 +4,7 @@ import numpy as np
 import os
 from scipy import integrate
 
-from utils import spline_interp, spline_interp_missing_value, plot_data
+from utils import plot_data, spline_interp, spline_interp_missing_value
 
 # input_folder_path内のCSVファイルに特異値分解を施し、その結果をプロットする
 # また、ピーク成分とノイズ成分の積分値の差もプロットする
@@ -130,9 +130,10 @@ def separate_noise_from_peak(input_file_path, output_folder_path, M, V_index):
 		peak_graph_path = output_folder_path + "peak.png"
 		plot_data(fig_size=(8, 5),
 					title="Peak Component (M = " + str(M) + ", V_index: 0~" +str(V_index-1) + ")",
-					ylabel="Electric Power μcal/sec", xlabel="Time[sec]",
 					save_path=peak_graph_path,
-					data1=[x, peak_component])
+					ylabel="Electric Power μcal/sec", xlabel="Time[min]",
+					data1=[x, peak_component],
+					label1="peak")
 		print('\033[32m' + 'SUCCESS：SAVE TO ' + peak_graph_path + '\033[0m')
 
 		# ノイズ成分をプロット
@@ -140,16 +141,18 @@ def separate_noise_from_peak(input_file_path, output_folder_path, M, V_index):
 		if V_size > M: # 通常の処理
 			plot_data(fig_size=(8, 5),
 					title="Noise Component (M = " + str(M) + ", V_index: " + str(V_index) + "~" + str(M) + ")",
-					ylabel="Electric Power μcal/sec", xlabel="Time[sec]",
 					save_path=noise_graph_path,
-					data1=[x, noise_component])
+					ylabel="Electric Power μcal/sec", xlabel="Time[min]",
+					data1=[x, noise_component],
+					label1="noise")
 
 		else: # 要素波形の数がMに満たないときの処理 
 			plot_data(fig_size=(8, 5),
 					title="Noise Component (M = " + str(M) + ", V_index: " + str(V_index) + "~" + str(V_size) + ")",
-					ylabel="Electric Power μcal/sec", xlabel="Time[sec]",
 					save_path=noise_graph_path,
-					data1=[x, noise_component])
+					ylabel="Electric Power μcal/sec", xlabel="Time[min]",
+					data1=[x, noise_component],
+					label1="noise")
 		print('\033[32m' + 'SUCCESS：SAVE TO ' + noise_graph_path + '\033[0m')
 		
 
@@ -157,10 +160,11 @@ def separate_noise_from_peak(input_file_path, output_folder_path, M, V_index):
 		peak_noise_graph_path = output_folder_path + "peak_noise.png"
 		plot_data(fig_size=(8, 5),
 					title="Peak And Noise Component (M = " + str(M) + ", V_index: " + str(V_index) + ")",
-					ylabel="Electric Power μcal/sec", xlabel="Time[sec]",
 					save_path=peak_noise_graph_path,
-					data1=[x, peak_component],
-					data2=[x, noise_component])
+					ylabel="Electric Power μcal/sec", xlabel="Time[min]",
+					data1=[x, noise_component],
+					data2=[x, peak_component],
+					label1="noise", label2="peak")
 		print('\033[32m' + 'SUCCESS：SAVE TO ' + peak_noise_graph_path + '\033[0m')
 
 
@@ -220,9 +224,10 @@ def plot_difference_peak_noise(svd_split_path_base, output_folder_path, titratio
 	
     plot_data(fig_size=(8, 5),
 				title="Integral Value of Peak Component",
-				ylabel="integral value(= Electric energy?)", xlabel="Number of titrations = " + str(titration_count),
 				save_path=difference_peak_noise_graph_path,
+				ylabel="integral value(= Electric energy?)", xlabel="Number of titrations = " + str(titration_count),
 				data1=[x_diff, difference_peak_noise],
 				data2=[x_diff_spline, difference_peak_noise_spline],
-				scatter1=True)
+				label1="sample", label2="curve",
+				type1="scatter")
     print('\033[32m' + 'SUCCESS：SAVE TO ' + difference_peak_noise_graph_path + '\033[0m')

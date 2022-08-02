@@ -4,9 +4,8 @@ import os
 import pandas as pd
 import re
 
-from utils import make_dictionary
-from utils import separate_with_commas
-from utils import spline_interp
+from utils import make_dictionary, plot_data
+from utils import separate_with_commas, spline_interp
 
 def itc_file_data_visualization(input_file_path, output_folder_path):
     """
@@ -95,20 +94,15 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
         """
         プロット(滴定毎の実験データ)
         """
-        graph_path = path_base + f"_graph{i}.png"  # グラフ保存用のPATH
+        each_epower_graph_path = path_base + f"_graph{i}.png"  # グラフ保存用のPATH
 
-        plt.figure(figsize=(15, 5))  # Figureを設定
-        plt.title('Transition of Electric Power')  # タイトルを追加
-        plt.xlabel("Time", size="large")  # x軸ラベルを追加
-        plt.ylabel("Electric Power", size="large")  # y軸ラベルを追加
-        plt.minorticks_on()  # 補助目盛りを追加
-        # 目盛り線の表示
-        plt.grid(which="major", color="black", alpha=0.5)
-        plt.grid(which="minor", color="gray", linestyle=":")
-        plt.plot(df.Time, df.ElectricPower, color='black')  # データをプロット
-        plt.savefig(graph_path)  # グラフを保存
-        plt.close()
-        print('\033[32m' + 'SUCCESS：SAVE TO ' + graph_path + '\033[0m')
+        plot_data(fig_size=(8, 5),
+					title=f"Electric Power of Transition{i}",
+					save_path=each_epower_graph_path,
+					ylabel="μcal/sec", xlabel="Time[min]",
+					data1=[df.Time, df.ElectricPower],
+				    label1="electric power")
+        print('\033[32m' + 'SUCCESS：SAVE TO ' + each_epower_graph_path + '\033[0m')
 
         d_time = float(time_each[-1]) - float(time_each[0])  # １回の実験（滴定）の時間
         time.append(time_each[-1])  # １回の実験（滴定）の時間を配列に追加
@@ -124,32 +118,26 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
 
     print('電力の推移をプロット')
     # 電力の推移をプロット
-    plt.figure(figsize=(15, 5))  # Figureを設定
-    plt.title('Electric Power', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[min]", size="large")  # x軸ラベルを追加
-    plt.ylabel("μcal/sec", size="large")  # y軸ラベルを追加
-    plt.minorticks_on()  # 補助目盛りを追加
-    plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
-    plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
-    plt.plot(df_all.Time, df_all.ElectricPower, color='black')  # データをプロット
-    plt.savefig(electric_power_graph_path)  # グラフを保存
-    plt.close()
+    plot_data(fig_size=(8, 5),
+					title="Electric Power",
+					save_path=electric_power_graph_path,
+					ylabel="μcal/sec", xlabel="Time[min]",
+					data1=[df_all.Time, df_all.ElectricPower],
+				    label1="electric power")
     print('\033[32m' + 'SUCCESS：SAVE TO ' + electric_power_graph_path + '\033[0m')
 
     print('電力量の推移をプロット')
     # 電力量の推移をプロット
-    plt.figure(figsize=(15, 5))  # Figureを設定
-    plt.title('Molar Ratio(Glc/GBd)', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[min]", size="large")  # x軸ラベルを追加
-    plt.ylabel("kcal/mole of injection", size="large")  # y軸ラベルを追加
-    plt.minorticks_on()  # 補助目盛りを追加
-    plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
-    plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
-    plt.scatter(time, electric_energy, color='black')  # データをプロット(散布図)
-    time, electric_energy = spline_interp(time, electric_energy)  # スプライン曲線に変換
-    plt.plot(time, electric_energy, '-', color='red')  # データをプロット（折れ線グラフ）
-    plt.savefig(electric_energy_graph_path)  # グラフを保存
-    plt.close()
+    time_spline, electric_energy_spline = spline_interp(time, electric_energy)  # スプライン曲線に変換
+    plot_data(fig_size=(8, 5),
+                title="Molar Ratio(Glc/GBd)",
+                save_path=electric_energy_graph_path,
+                ylabel="kcal/mole of injection", xlabel="Time[min]",
+                data1=[time, electric_energy],
+                data2=[time_spline, electric_energy_spline],
+                label1="electric energy",
+                label2="curve",
+                type1="scatter")
     print('\033[32m' + 'SUCCESS：SAVE TO ' + electric_energy_graph_path + '\033[0m')
 
     return experimental_data_path, titration_count

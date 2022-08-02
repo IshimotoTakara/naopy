@@ -4,8 +4,7 @@ import os
 import pandas as pd
 import re
 
-from utils import separate_with_commas
-from utils import spline_interp
+from utils import plot_data, separate_with_commas, spline_interp
 
 
 def nitpic_file_data_visualization(input_file_path, output_folder_path):
@@ -109,34 +108,26 @@ def nitpic_file_data_visualization(input_file_path, output_folder_path):
 
     print('電力の推移をプロット')
     # 電力の推移をプロット
-    plt.figure(figsize=(8, 5))  # Figureを設定
-    plt.rc('axes', unicode_minus=False)  # "ー"が文字化けするのを防ぐ
-    plt.title('Electric Power', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[min]", size="large")  # x軸ラベルを追加
-    plt.ylabel("μcal/sec", size="large")  # y軸ラベルを追加
-    plt.minorticks_on()  # 補助目盛りを追加
-    plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
-    plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
-    plt.plot(df_all.Time / 60, df_all.ElectricPower, color='black')  # データをプロット
-    plt.axhline(0.04, color="red", label="Base Line")  # y = 0.04をプロット（ベースライン）← 手書き？
-    plt.legend()  # これないと、ベースラインのラベルが繁栄さえれない
-    plt.savefig(electric_power_graph_path)  # グラフを保存
-    plt.close()
+    plot_data(fig_size=(8, 5),
+					title="Electric Power",
+					save_path=electric_power_graph_path,
+					ylabel="μcal/sec", xlabel="Time[min]",
+					data1=[df_all.Time / 60, df_all.ElectricPower],
+					data2=0.04,
+				    label1="electric power", label2="Base Line",
+                    type2="axhline")
     print('\033[32m' + 'SUCCESS：SAVE TO ' + electric_power_graph_path + '\033[0m')
 
     print('電力量の推移をプロット')
     # 電力量の推移をプロット
-    plt.figure(figsize=(15, 5))  # Figureを設定
-    plt.title('Molar Ratio(Glc/GBd)', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[min]", size="large")  # x軸ラベルを追加
-    plt.ylabel("kcal/mole of injection", size="large")  # y軸ラベルを追加
-    plt.minorticks_on()  # 補助目盛りを追加
-    plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
-    plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
-    plt.scatter(time, electric_energy, color='black')  # データをプロット(散布図)
-    time, electric_energy = spline_interp(time, electric_energy)  # スプライン補間
-    plt.plot(time, electric_energy, '-', color='red')  # データをプロット（折れ線グラフ）
-    plt.savefig(electric_energy_graph_path)  # グラフを保存
-    plt.close()
+    time_spline, electric_energy_spline = spline_interp(time, electric_energy)  # スプライン補間
+    plot_data(fig_size=(8, 5),
+					title="Molar Ratio(Glc/GBd)",
+					save_path=electric_energy_graph_path,
+					ylabel="kcal/mole of injection", xlabel="Time[min]",
+					data1=[time, electric_energy],
+					data2=[time_spline, electric_energy_spline],
+				    label1="electric energy", label2="curve",
+                    type1="scatter")
     print('\033[32m' + 'SUCCESS：SAVE TO ' + electric_energy_graph_path + '\033[0m')
 

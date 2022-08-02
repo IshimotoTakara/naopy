@@ -48,7 +48,7 @@ def spline_interp_missing_value(in_x, in_y):
 
     return df.index.tolist(), df.values.tolist()
 
-def plot_data(fig_size, title, ylabel, xlabel, save_path, data1, data2=None, scatter1=False, scatter2=False):
+def plot_data(fig_size, title, save_path, ylabel, xlabel, data1, data2=None, label1="", label2="", type1="plot", type2="plot"):
     plt.figure(figsize=fig_size)  # Figureを設定
     plt.title(title, fontsize=18)  # タイトルを追加
     plt.ylabel(ylabel, size="large")  # y軸ラベルを追加
@@ -57,16 +57,35 @@ def plot_data(fig_size, title, ylabel, xlabel, save_path, data1, data2=None, sca
     plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
     plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
     
-    # data2にデータがあればdata1とdata2を同時にプロット，なければdata1だけプロット
-    if isinstance(data2, list):
-        if scatter1==True:
-            plt.scatter(data1[0], data1[1], color='black')  # データ1をプロット（散布図）
-            plt.scatter(data2[0], data2[1], color='red') if scatter2==True else plt.plot(data2[0], data2[1], color='red')  # データ2をプロット（scatter2=Trueで散布図）
-        else:
-            plt.plot(data1[0], data1[1], color='black')  # データ1をプロット（折れ線グラフ）
-            plt.scatter(data2[0], data2[1], color='red') if scatter2==True else plt.plot(data2[0], data2[1], color='red')  # データ2をプロット（scatter2=Trueで散布図）         
+    # data2にデータがあればdata1とdata2を同時にプロット
+    if isinstance(data2, (list, int, float)):
+        if type1=="plot":
+            plt.plot(data1[0], data1[1], color='black', label=label1)      # データ1をプロット（折れ線グラフ）
+            if type2=="plot":
+                plt.plot(data2[0], data2[1], color='red', label=label2)    # データ2をプロット（折れ線グラフ）
+            elif type2=="scatter":
+                plt.scatter(data2[0], data2[1], color='red', label=label2) # データ2をプロット（散布図）
+            elif type2=="axhline":
+                plt.axhline(data2, color='red', label=label2)              # データ2をプロット（y = data2）
+
+        elif type1=="scatter":
+            plt.scatter(data1[0], data1[1], color='black', label=label1)   # データ1をプロット（散布図）
+            if type2=="plot":
+                plt.plot(data2[0], data2[1], color='red', label=label2)    # データ2をプロット（折れ線グラフ）
+
+            elif type2=="scatter":
+                plt.scatter(data2[0], data2[1], color='red', label=label2) # データ2をプロット（散布図）
+            elif type2=="axhline":
+                plt.axhline(data2[0], data2[1], color='red', label=label2) # データ2をプロット（y = data2）
+    # data2がなければdata1だけプロット   
     else:
-        plt.scatter(data1[0], data1[1], color='red') if scatter1==True else plt.plot(data1[0], data1[1], color='black')  # データ1をプロット（scatter1=Trueで散布図）
+        if type1=="plot":
+            plt.plot(data1[0], data1[1], color='black', label=label1)    # データ1をプロット（折れ線グラフ）
+        elif type2=="scatter":
+            plt.scatter(data1[0], data1[1], color='black', label=label1) # データ1をプロット（散布図）
+        elif type1=="axhline":
+            plt.axhline(data1, color='black', label=label1)              # データ1をプロット（y = data1）
     
+    plt.legend()  # これないとラベルが繁栄さえれない
     plt.savefig(save_path)  # グラフを保存
     plt.close()
