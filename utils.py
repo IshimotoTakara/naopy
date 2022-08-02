@@ -18,9 +18,8 @@ def separate_with_commas(param):
     return l
 
 # ３次元配列["time0,ep0,temp0", "time1,ep1,temp1","",,,,]を辞書に変換する関数
-# option="d" → dictionaryのみを返す
-# option="tedd" → time, electric_power, degree, dictionaryを返す
-def make_dictionary(data, option):
+# time, electric_power, degree, dictionaryを返す
+def make_dictionary(data):
     time, electric_power, degree = [], [], []
     for s in data:
         time.append(float(s[0]) / 60) # 単位を[sec]に変換
@@ -35,10 +34,7 @@ def make_dictionary(data, option):
 
     dictionary = {'Time': time, 'ElectricPower': electric_power_from_zero, 'Degree': degree}
 
-    if option == "d":
-        return dictionary
-    elif option == "tedd":
-        return time, electric_power_from_zero, degree, dictionary
+    return time, electric_power_from_zero, degree, dictionary
 
 # スプライン曲線を作成する関数(離散データを折れ線グラフにしたときに滑らかになる)
 def spline_interp(in_x, in_y):
@@ -225,7 +221,7 @@ def plot_difference_peak_noise(svd_path, output_folder_path, titration_count):
             noise_component_integral = integrate.simps(noise_component, x) # ノイズ成分の積分値
             difference_peak_noise.append(peak_component_integral - noise_component) # ピーク成分と積分値を格納していく（滴定回数分）
 
-        # フォルダにcsv_file_peakとcsv_file_noiseのどちらか、または両方なかったらNone(欠損地) ← 後でスプライン補完（最初からdf使っとけばよかったと公後悔w）
+        # フォルダにcsv_file_peakとcsv_file_noiseのどちらか、または両方なかったらNone(欠損値) ← 後でスプライン補完（最初からdf使っとけばよかったと後悔w）
         else:
             difference_peak_noise.append(None)
 

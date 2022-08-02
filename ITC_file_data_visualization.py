@@ -4,10 +4,10 @@ import os
 import pandas as pd
 import re
 
-# func.pyファイルに繰り返し使う関数を定義している
-from func import make_dictionary
-from func import separate_with_commas
-from func import spline_interp
+# utils.pyファイルに繰り返し使う関数を定義している
+from utils import make_dictionary
+from utils import separate_with_commas
+from utils import spline_interp
 
 def itc_file_data_visualization(input_file_path, output_folder_path):
     """
@@ -54,7 +54,7 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     # ','区切りの要素を','毎に分割する
     data = separate_with_commas(data)
     # 配列dataを辞書に整形
-    dictionary = make_dictionary(data, "d")
+    _, _, _, dictionary = make_dictionary(data)
     # 整形した実験データをCSVファイルに出力する
     df_all = pd.DataFrame(dictionary)
     df_all.to_csv(data_path)
@@ -89,7 +89,7 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
 
         del data[0]  # 最初の行（@〜）を削除
         data = separate_with_commas(data)  # ','区切りの要素を','毎に分割する
-        time_each, electric_power_each, degree_each, dictionary = make_dictionary(data, "tedd")  # 配列dataを辞書に整形
+        time_each, electric_power_each, degree_each, dictionary = make_dictionary(data)  # 配列dataを辞書に整形
         df = pd.DataFrame(dictionary)
         df.to_csv(csv_path)
         print('\033[32m' + 'SUCCESS：SAVE TO ' + csv_path + '\033[0m')
