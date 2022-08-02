@@ -2,8 +2,10 @@
 # 概要
 ## 等温滴定熱測定（Isothermal Tiration Calorimertry）について
 
+<img width="1046" alt="スクリーンショット 2022-08-02 23 47 32" src="https://user-images.githubusercontent.com/57268381/182403666-c408a76f-7d3b-407a-b46c-38e8cac897b5.png">
+
 # 目的
-ITCファイルのデータ可視化,既存ソフトウェアの出力と同じような動作をするコードを作る.
+ITCファイルのデータ可視化,既存ソフトウェア(nitpic)の出力と同じような動作をするコードを作る.
 ## 問題点
 ### ピーク解析
 - ベースライン
