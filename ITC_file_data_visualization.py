@@ -126,7 +126,7 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     # 電力の推移をプロット
     plt.figure(figsize=(15, 5))  # Figureを設定
     plt.title('Electric Power', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[sec]", size="large")  # x軸ラベルを追加
+    plt.xlabel("Time[min]", size="large")  # x軸ラベルを追加
     plt.ylabel("μcal/sec", size="large")  # y軸ラベルを追加
     plt.minorticks_on()  # 補助目盛りを追加
     plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
@@ -140,7 +140,7 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     # 電力量の推移をプロット
     plt.figure(figsize=(15, 5))  # Figureを設定
     plt.title('Molar Ratio(Glc/GBd)', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[sec]", size="large")  # x軸ラベルを追加
+    plt.xlabel("Time[min]", size="large")  # x軸ラベルを追加
     plt.ylabel("kcal/mole of injection", size="large")  # y軸ラベルを追加
     plt.minorticks_on()  # 補助目盛りを追加
     plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
