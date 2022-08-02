@@ -35,7 +35,7 @@ def main():
     第6引数: V_index → 要素波形のどこまでをピーク成分とするか
     '''
     print('\033[34m' + 'RUN：singular_value_decomposition' + '\033[0m')
-    svd(input_file_path_itc, input_file_path_svd, all_data_path, titration_count, "output/", 50,4)
+    # svd(input_file_path_itc, input_file_path_svd, all_data_path, titration_count, "output/", 50,4)
     print('\033[34m' + 'Task of singular_value_decomposition completed!!!')
 
     '''

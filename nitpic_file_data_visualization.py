@@ -46,12 +46,13 @@ def nitpic_file_data_visualization(input_file_path, output_folder_path):
     np.savetxt(head_path, head, delimiter=",", fmt='%s')
     print('\033[32m' + 'SUCCESS：SAVE TO ' + head_path + '\033[0m')
 
-    data_invj = data  # INJECTIONNUMBERを含む要素が残っているデータのコピー(滴定毎のデータに分割するときに使う)
+    data_inject = data  # INJECTIONNUMBERを含む要素が残っているデータのコピー(滴定毎のデータに分割するときに使う)
     # 実験データの'INJECTIONNUMBER'を含む行以外を抽出(INJECTIONNUMBERを含む行を削除)
     data = [s for s in data if 'INJECTIONNUMBER' not in s]
     del data[-1]  # 最後の行（INJECTIONNUMBER〜）を削除
-    # ','区切りの要素を','毎に分割する
-    data = separate_with_commas(data)
+    
+    data = separate_with_commas(data) # ','区切りの要素を','毎に分割する
+
     # 配列dataを辞書に整形
     time, electric_power = [], []
     for s in data:
@@ -66,8 +67,8 @@ def nitpic_file_data_visualization(input_file_path, output_folder_path):
     print('\033[32m' + 'SUCCESS：SAVE TO ' + data_path + '\033[0m')
 
 
-    # 'INJECTIONNUMBER'を含むdata_invjの要素を検索
-    invj_in = [s for s in data_invj if 'INJECTIONNUMBER' in s]
+    # 'INJECTIONNUMBER'を含むdata_injectの要素を検索
+    invj_in = [s for s in data_inject if 'INJECTIONNUMBER' in s]
     p = r'INJECTIONNUMBER(.*)'
     r = re.findall(p, invj_in[-1])    # 「INJECTIONNUMBER25」中のINJECTIONNUMBERの後ろの文字を抽出
     titration_count = int(r[0])  # 滴定回数(25)
@@ -81,9 +82,9 @@ def nitpic_file_data_visualization(input_file_path, output_folder_path):
         # INJECTIONNUMBER0~INJECTIONNUMBERtitration_countまでをINJECTIONNUMBERi毎に整形する
         # i == titration_countの時は次の'INJECTIONNUMBER'が無いから、'INJECTIONNUMBER'から最後までを格納する
         if i == titration_count:
-            data = data_invj[data_invj.index(invj_in[i]):]
+            data = data_inject[data_inject.index(invj_in[i]):]
         else:
-            data = data_invj[data_invj.index(invj_in[i]):data_invj.index(invj_in[i + 1])]
+            data = data_inject[data_inject.index(invj_in[i]):data_inject.index(invj_in[i + 1])]
 
         del data[0]  # 最初の行（INJECTIONNUMBER〜）を削除
         data = separate_with_commas(data)  # ','区切りの要素を','毎に分割する
