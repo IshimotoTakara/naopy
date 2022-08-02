@@ -4,7 +4,6 @@ import os
 import pandas as pd
 import re
 
-# utils.pyファイルに繰り返し使う関数を定義している
 from utils import make_dictionary
 from utils import separate_with_commas
 from utils import spline_interp

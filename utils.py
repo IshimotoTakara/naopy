@@ -1,5 +1,5 @@
 """
-関数
+繰り返し使う関数
 """
 import numpy as np
 import pandas as pd
@@ -48,3 +48,5 @@ def spline_interp_missing_value(in_x, in_y):
     df = df.dropna(how='all') # 欠損値の行を削除
 
     return df.index.tolist(), df.values.tolist()
+
+def plot_data():
