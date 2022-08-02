@@ -11,8 +11,8 @@ from singular_value_decomposition import singular_value_decomposition as svd
 main関数
 """
 def main():
-    input_file_path_itc = "data/210107C.ITC" # data/200203C.ITC
-    # input_file_path_nitpic = "data/200203C.nitpic"　# 210107C.nitpicもあるのか？
+    input_file_path_itc = "data/200203C/200203C.ITC" # data/200203C/200203C.ITC
+    input_file_path_nitpic = "data/200203C/200203C.nitpic" # 210107C.nitpicもあるのか？
 
     os.makedirs("output", exist_ok=True)
 
@@ -43,9 +43,9 @@ def main():
     第1引数: input_file_path_nitpic, → 分析対象のnitpicファイルのパス
     第2引数: output_folder_path → 出力フォルダのパス（"/output"）
     '''
-    # print('\033[34m' + 'RUN：nitpic_file_data_visualization' + '\033[0m')
-    # nitpic(input_file_path_nitpic, "output/")
-    # print('\033[34m' + 'Task of nitpic_file_data_visualization completed!!!' + '\033[0m')
+    print('\033[34m' + 'RUN：nitpic_file_data_visualization' + '\033[0m')
+    nitpic(input_file_path_nitpic, "output/")
+    print('\033[34m' + 'Task of nitpic_file_data_visualization completed!!!' + '\033[0m')
 
 if __name__ == '__main__':
     print('\033[33m' + 'RUN：main' + '\033[0m')

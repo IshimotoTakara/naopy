@@ -4,21 +4,21 @@ import os
 import pandas as pd
 import re
 
-from func import separate_with_commas
-from func import spline_interp
+from utils import separate_with_commas
+from utils import spline_interp
 
 
 def nitpic_file_data_visualization(input_file_path, output_folder_path):
     """
-    ITCファイル読み込み
+    nitpicファイル読み込み
     """
-    path = input_file_path  # ITCファイル(入力ファイル)のPATH
+    path = input_file_path  # nitpicファイル(入力ファイル)のPATH
     with open(path, mode='rt', encoding='utf-8') as f:
         read_data = f.readlines()
     print('\033[32m' + 'SUCCESS：READ ' + path + '\033[0m')
 
     """
-    出力フォルダを作成する（ITCファイル名-split_experimental_data）
+    出力フォルダを作成する（nitpicファイル名-split_experimental_data）
     """
     # file_name = os.path.basename(path)  # 拡張子ありのファイル名
     file_name_head = os.path.splitext(os.path.basename(path))[0]  # 拡張子なしのファイル名
@@ -26,17 +26,15 @@ def nitpic_file_data_visualization(input_file_path, output_folder_path):
     output_folder_path_base = output_folder_path + file_name_head + "/"
 
     """
-    ITCファイルを整形する
+    nitpicファイルを整形する
     """
-    file_name = os.path.basename(path)  # 拡張子ありのファイル名
-    file_name_head = os.path.splitext(os.path.basename(path))[0]  # 拡張子なしのファイル名
     # CSVファイル（出力ファイル）のPATH
-    head_path = output_folder_path_base + file_name_head + "_nitpic_head.csv"  # ITCファイル先頭の情報を格納するCSVファイル
-    data_path = output_folder_path_base + file_name_head + "_nitpic_experimental_data.csv"  # ITCファイルの実験データを格納するCSVファイル
+    head_path = output_folder_path_base + file_name_head + "_nitpic_head.csv"  # nitpicファイル先頭の情報を格納するCSVファイル
+    data_path = output_folder_path_base + file_name_head + "_nitpic_experimental_data.csv"  # nitpicファイルの実験データを格納するCSVファイル
 
-    print('ITCファイルをヘッダーと実験データに分割します.')
-    # 先頭３１行とそれ以外で分割する
-    head = read_data[:27]  # 先頭31個の要素
+    print('nitpicファイルをヘッダーと実験データに分割します.')
+    # 先頭27行と29行目以降で分割する
+    head = read_data[:27]  # 先頭27個の要素
     data = read_data[28:]  # 実験データ
 
     # 空白と改行文字を削除
