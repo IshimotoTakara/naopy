@@ -1,30 +1,25 @@
-# naopy
+# naopy: 等温滴定熱測定(ITC)データ解析システムの改良と機能拡張
+# 概要
+## 等温滴定熱測定（Isothermal Tiration Calorimertry）について
 
+<img width="1046" alt="スクリーンショット 2022-08-02 23 47 32" src="https://user-images.githubusercontent.com/57268381/182403666-c408a76f-7d3b-407a-b46c-38e8cac897b5.png">
 
 # 目的
-ITCファイルのデータ可視化,既存ソフトウェアの出力と同じような動作をするコードを作る.
+ITCファイルのデータ可視化,既存ソフトウェア(nitpic)の出力と同じような動作をするコードを作る.
+## 問題点
+### ピーク解析
+- ベースライン
+### フィッティング
+- データに影響を受ける
 
 # 現状
+✅ ITCファイルを読み込んで, データの前処理、プロットして可視化．
 
-✅ ITCファイルを読み込んで, データの前処理、可視化までは形にした.
-
-✅ ファイルごとにoutput配下にフィルだを作成し、そこにCSVファイルや図を出力するように修正.
-
-✅ 図のタイトルなどに使われている日本語を英語に修正.
-
-✅ itc_file_data_visualization関数でsplit_experimental_dataのパスを返すように修正.
-
-   → singular_value_decomposition関数の引数用
+✅ ファイルごとにoutput配下にフィルだを作成し、そこにCSVファイルや図を出力.
    
-✅ split_experimental_dataフォルダにあるCSVファイルのデータ（滴定ごとの電圧の変化）を特異値分解し、ピーク成分とノイズ成分を分ける.
+✅ split_experimental_dataフォルダにあるCSVファイルのデータ（滴定ごとの電圧の変化）を特異値分解し、ピーク成分とノイズ成分に分割して保存.
 
 ✅ 特異値分解で抽出したピーク成分とノイズ成分をプロット.
-
-----------New------------------------------------------------
-
-✅ 210107C_ITC_experimental_data.csv(全実験データ)に最初から[sec],[μcal/sec]に変換して保存するように修正.
-   
-   → 至る所に "/ 60" をしなくて良くなった🙆
    
 ✅ ステップ数で分解していたピーク部分と時間との対応づけ（x軸がステップ数のままだと積分値が電力量にならない）.
 
@@ -32,39 +27,55 @@ ITCファイルのデータ可視化,既存ソフトウェアの出力と同じ�
 
 ✅ 実験データが少ない場合、特異値分解ができず、積分結果を出せない（欠損値が存在する）ことがあるので,プロットの際にスプライン補完などを使って,欠損値に対する処理を行うようにした.
 
-⚠️ scipy.integrateで積分のところ実装してて、もしかしたらscipyのインストールorアップデートがいるかも.
+# 今後の課題
+- ## ベイズ推定による曲線フィッティング
+  特異値分解によるピーク解析は通過点であり，ベイズ推定を中心とした解析が今後の目標．
+  ベイズ的アプローチにより，電力量のサンプルから等温線を引くことができたら嬉しい？
 
-自分がコーディングをする際にメモしたこと（メモ帳.pdf）も共有しておきます.
+  **現状では電力量のサンプルをスプライン補完で曲線にしてプロットしているだけ．**
+
+  [Prml 最尤推定からベイズ曲線フィッティング](https://www.slideshare.net/takutori/prml-122257791)
+- ## ベースラインについて
+  以下の点を中心にリサーチする必要がある．
+  - 今までnitpicではどのようにベースラインを設定していたのか
+  - 設定したベースラインを用いてどのように解析を行っていなのか
+  - ベースラインの手動設定を自動化できるのか
+
+# デモ
+
+https://user-images.githubusercontent.com/57268381/182407990-1ea4ea3b-a6b7-4385-b107-626719d35d92.mov
+
 
 # ディレクトリの説明
-this_project/data: 入力用のITCファイルを保存しておく
+- this_project/data
+  
+  入力（解析）用のITCファイルを保存しておく．
 
-this_project/output/ITCファイル名: このコードで出力されるファイルが格納される
+- this_project/output
 
-this_project/output/ITCファイル名/split_experimental_data: ITCファイルのうちの分割した実験データの出力に使う
+  入力データ（ITCファイル）ごとに処理された結果を格納する．
 
-this_project/output/ITCファイル名/singular_value_decomposition: 特異値分解の結果の出力に使う
+  - output/ITCファイル名
+    - ITCファイル名/split_experimental_data
 
-今回はthis_project = naopyで作業を行なわせていただいております.
+      ITCファイルの実験データを滴定ごとに分割し，それぞれをCSVファイルやプロット画像として保存するためのディレクトリ．
+    - ITCファイル名/singular_value_decomposition
+
+      ピーク成分とノイズ成分に分解したデータのCSVファイルとプロット画像，特異値分解の出力結果を保存するためのディレクトリ．
+
 
 # 参考
 [異常検知（４）時系列信号の変化の検知、特異スペクトル変換法など](https://qiita.com/makotoito/items/1bb062e4264394e1c2da)
 
 [Scipy 数値積分](https://python.atelierkobato.com/scipy_integrate/)
 # 動作環境
-MacOS Big Monterey
-
-Python 3.7.6
-
-numpy                     1.19.5  
-
-pandas                    1.0.1     
-
-scipy                     1.4.1  
+- MacOS Big Monterey
+- Python 3.7.6
+- numpy 1.19.5  
+- pandas 1.0.1     
+- scipy 1.4.1  
 
 # 実行方法
 ```
 $ python3 main.py
 ```
-
-不要なところは適宜コメントアウトして使ってね

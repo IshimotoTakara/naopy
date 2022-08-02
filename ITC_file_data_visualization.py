@@ -4,10 +4,8 @@ import os
 import pandas as pd
 import re
 
-# func.pyファイルに繰り返し使う関数を定義している
-from func import make_dictionary
-from func import separate_with_commas
-from func import spline_interp
+from utils import make_dictionary, plot_data
+from utils import separate_with_commas, spline_interp
 
 def itc_file_data_visualization(input_file_path, output_folder_path):
     """
@@ -24,16 +22,13 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     file_name_head = os.path.splitext(os.path.basename(input_file_path))[0]  # 拡張子なしのファイル名
     os.makedirs(output_folder_path + file_name_head, exist_ok=True)
     output_folder_path_base = output_folder_path + file_name_head + "/"
-    input_file_path_svd = output_folder_path_base + "split_experimental_data/"
-    os.makedirs(input_file_path_svd, exist_ok=True)
-
 
     """
     ITCファイルを整形する
     """
     # CSVファイル（出力ファイル）のPATH
     head_path = output_folder_path_base + file_name_head + "_ITC_head.csv"  # ITCファイル先頭の情報を格納するCSVファイル
-    data_path = output_folder_path_base + file_name_head + "_ITC_experimental_data.csv"  # ITCファイルの実験データを格納するCSVファイル
+    experimental_data_path = output_folder_path_base + file_name_head + "_ITC_experimental_data.csv"  # ITCファイルの実験データを格納するCSVファイル
 
     print('ITCファイルをヘッダーと実験データに分割します.')
     # 先頭３１行とそれ以外で分割する
@@ -54,11 +49,11 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     # ','区切りの要素を','毎に分割する
     data = separate_with_commas(data)
     # 配列dataを辞書に整形
-    dictionary = make_dictionary(data, "d")
+    _, _, _, dictionary = make_dictionary(data)
     # 整形した実験データをCSVファイルに出力する
     df_all = pd.DataFrame(dictionary)
-    df_all.to_csv(data_path)
-    print('\033[32m' + 'SUCCESS：SAVE TO ' + data_path + '\033[0m')
+    df_all.to_csv(experimental_data_path)
+    print('\033[32m' + 'SUCCESS：SAVE TO ' + experimental_data_path + '\033[0m')
 
     """
     実験データを滴定回数毎に分割する
@@ -72,8 +67,10 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
     print('滴定回数：' + str(titration_count))
 
     # CSVファイル（出力ファイル）のPATH名のベース
-    path_base = output_folder_path_base + "split_experimental_data/"+ file_name_head
+    split_experimental_data_path = output_folder_path_base + "split_experimental_data/"
+    os.makedirs(split_experimental_data_path, exist_ok=True)
 
+    path_base = split_experimental_data_path + file_name_head
     time, electric_energy = [], []  # 電力量の推移をプロットするときに使う
 
     # 滴定回数毎の実験データをCSVファイルに出力,同時にプロット
@@ -89,7 +86,7 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
 
         del data[0]  # 最初の行（@〜）を削除
         data = separate_with_commas(data)  # ','区切りの要素を','毎に分割する
-        time_each, electric_power_each, degree_each, dictionary = make_dictionary(data, "tedd")  # 配列dataを辞書に整形
+        time_each, electric_power_each, degree_each, dictionary = make_dictionary(data)  # 配列dataを辞書に整形
         df = pd.DataFrame(dictionary)
         df.to_csv(csv_path)
         print('\033[32m' + 'SUCCESS：SAVE TO ' + csv_path + '\033[0m')
@@ -97,20 +94,15 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
         """
         プロット(滴定毎の実験データ)
         """
-        graph_path = path_base + f"_graph{i}.png"  # グラフ保存用のPATH
+        each_epower_graph_path = path_base + f"_graph{i}.png"  # グラフ保存用のPATH
 
-        plt.figure(figsize=(15, 5))  # Figureを設定
-        plt.title('Transition of Electric Power')  # タイトルを追加
-        plt.xlabel("Time", size="large")  # x軸ラベルを追加
-        plt.ylabel("Electric Power", size="large")  # y軸ラベルを追加
-        plt.minorticks_on()  # 補助目盛りを追加
-        # 目盛り線の表示
-        plt.grid(which="major", color="black", alpha=0.5)
-        plt.grid(which="minor", color="gray", linestyle=":")
-        plt.plot(df.Time, df.ElectricPower, color='black')  # データをプロット
-        plt.savefig(graph_path)  # グラフを保存
-        plt.close()
-        print('\033[32m' + 'SUCCESS：SAVE TO ' + graph_path + '\033[0m')
+        plot_data(fig_size=(8, 5),
+					title=f"Electric Power of Transition{i}",
+					save_path=each_epower_graph_path,
+					ylabel="μcal/sec", xlabel="Time[min]",
+					data1=[df.Time, df.ElectricPower],
+				    label1="electric power")
+        print('\033[32m' + 'SUCCESS：SAVE TO ' + each_epower_graph_path + '\033[0m')
 
         d_time = float(time_each[-1]) - float(time_each[0])  # １回の実験（滴定）の時間
         time.append(time_each[-1])  # １回の実験（滴定）の時間を配列に追加
@@ -126,32 +118,26 @@ def itc_file_data_visualization(input_file_path, output_folder_path):
 
     print('電力の推移をプロット')
     # 電力の推移をプロット
-    plt.figure(figsize=(15, 5))  # Figureを設定
-    plt.title('Electric Power', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[sec]", size="large")  # x軸ラベルを追加
-    plt.ylabel("μcal/sec", size="large")  # y軸ラベルを追加
-    plt.minorticks_on()  # 補助目盛りを追加
-    plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
-    plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
-    plt.plot(df_all.Time, df_all.ElectricPower, color='black')  # データをプロット
-    plt.savefig(electric_power_graph_path)  # グラフを保存
-    plt.close()
+    plot_data(fig_size=(8, 5),
+					title="Electric Power",
+					save_path=electric_power_graph_path,
+					ylabel="μcal/sec", xlabel="Time[min]",
+					data1=[df_all.Time, df_all.ElectricPower],
+				    label1="electric power")
     print('\033[32m' + 'SUCCESS：SAVE TO ' + electric_power_graph_path + '\033[0m')
 
     print('電力量の推移をプロット')
     # 電力量の推移をプロット
-    plt.figure(figsize=(15, 5))  # Figureを設定
-    plt.title('Molar Ratio(Glc/GBd)', fontsize=18)  # タイトルを追加
-    plt.xlabel("Time[sec]", size="large")  # x軸ラベルを追加
-    plt.ylabel("kcal/mole of injection", size="large")  # y軸ラベルを追加
-    plt.minorticks_on()  # 補助目盛りを追加
-    plt.grid(which="major", color="black", alpha=0.5)  # 目盛り線の表示
-    plt.grid(which="minor", color="gray", linestyle=":")  # 目盛り線の表示
-    plt.scatter(time, electric_energy, color='black')  # データをプロット(散布図)
-    time, electric_energy = spline_interp(time, electric_energy)  # スプライン曲線に変換
-    plt.plot(time, electric_energy, '-', color='red')  # データをプロット（折れ線グラフ）
-    plt.savefig(electric_energy_graph_path)  # グラフを保存
-    plt.close()
+    time_spline, electric_energy_spline = spline_interp(time, electric_energy)  # スプライン曲線に変換
+    plot_data(fig_size=(8, 5),
+                title="Molar Ratio(Glc/GBd)",
+                save_path=electric_energy_graph_path,
+                ylabel="kcal/mole of injection", xlabel="Time[min]",
+                data1=[time, electric_energy],
+                data2=[time_spline, electric_energy_spline],
+                label1="electric energy",
+                label2="curve",
+                type1="scatter")
     print('\033[32m' + 'SUCCESS：SAVE TO ' + electric_energy_graph_path + '\033[0m')
 
-    return input_file_path_svd, data_path, titration_count
+    return experimental_data_path, titration_count
